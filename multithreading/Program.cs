@@ -41,10 +41,10 @@ namespace multithreading
             string text1 = "ju137", text2 = "whatthashit";
             var task1 = new Task<int>(TextLength, text1);
             task1.Start();
-            Task.Factory.StartNew<int>(TextLength, text2);
+            Task<int> task2 = Task.Factory.StartNew(TextLength, text2);
 
             Console.WriteLine($"\nthe length of '{text1}' is {task1.Result}");
-            Console.WriteLine($"\nthe length of '{text2}' is {task1.Result}");
+            Console.WriteLine($"\nthe length of '{text2}' is {task2.Result}");
             Console.WriteLine("Done");
         }
     }
