@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace multithreading
@@ -31,20 +32,25 @@ namespace multithreading
 
         public static void Main()
         {
-            //Task t = new Task(Write, "hello");
-            //Task.Factory.StartNew(() => Write('J'));
-            //var t = new Task(() => Write('K'));
-            //t.Start();
-            //Task.Factory.StartNew(Write, 123);
+            var cts = new CancellationTokenSource();
+            var token = cts.Token;
+            
+            var t = new Task(() =>
+            {
+                int i = 0;
+                while (true)
+                {
+                    if (token.IsCancellationRequested)
+                        break;
+                    else
+                        Console.WriteLine($"{i++}\t");
+                }
+            }, token);
+            t.Start();
 
-            //Write('L');
-            string text1 = "ju137", text2 = "whatthashit";
-            var task1 = new Task<int>(TextLength, text1);
-            task1.Start();
-            Task<int> task2 = Task.Factory.StartNew(TextLength, text2);
+            Console.ReadKey();
+            cts.Cancel();
 
-            Console.WriteLine($"\nthe length of '{text1}' is {task1.Result}");
-            Console.WriteLine($"\nthe length of '{text2}' is {task2.Result}");
             Console.WriteLine("Done");
         }
     }
