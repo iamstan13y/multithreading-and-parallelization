@@ -32,34 +32,26 @@ namespace multithreading
 
         public static void Main()
         {
-            var cts = new CancellationTokenSource();
-            var token = cts.Token;
+            var planned = new CancellationTokenSource();
+            var preventative = new CancellationTokenSource();
+            var emergency = new CancellationTokenSource();
 
-            token.Register(() =>
-            {
-                Console.WriteLine("Cancellation requested.");
-            });
+            var paranoid = CancellationTokenSource.CreateLinkedTokenSource(
+                planned.Token, preventative.Token, emergency.Token);
 
             Task.Factory.StartNew(() =>
-            {
-                token.WaitHandle.WaitOne();
-                Console.WriteLine("Wait handle released, cancellation requested.");
-            });
-
-            var t = new Task(() =>
             {
                 int i = 0;
                 while (true)
                 {
-                    token.ThrowIfCancellationRequested();
+                    paranoid.Token.ThrowIfCancellationRequested();
                     Console.WriteLine($"{i++}\t");
+                    Thread.Sleep(1000);
                 }
-            }, token);
-            t.Start();
+            }, paranoid.Token);
 
             Console.ReadKey();
-            cts.Cancel();
-
+            emergency.Cancel();
             Console.WriteLine("Done");
         }
     }
