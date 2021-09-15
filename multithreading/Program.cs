@@ -34,7 +34,18 @@ namespace multithreading
         {
             var cts = new CancellationTokenSource();
             var token = cts.Token;
-            
+
+            token.Register(() =>
+            {
+                Console.WriteLine("Cancellation requested.");
+            });
+
+            Task.Factory.StartNew(() =>
+            {
+                token.WaitHandle.WaitOne();
+                Console.WriteLine("Wait handle released, cancellation requested.");
+            });
+
             var t = new Task(() =>
             {
                 int i = 0;
