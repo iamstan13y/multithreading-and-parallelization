@@ -41,7 +41,9 @@ namespace multithreading
                 while (true)
                 {
                     if (token.IsCancellationRequested)
-                        break;
+                    {
+                        throw new OperationCanceledException();
+                    }
                     else
                         Console.WriteLine($"{i++}\t");
                 }
